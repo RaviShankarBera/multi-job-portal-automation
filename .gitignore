@@ -19,6 +19,7 @@ eggs/
 develop-eggs/
 .installed.cfg
 lib/
+!frontend/src/lib/
 lib64/
 parts/
 dist/
