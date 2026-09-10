@@ -3,7 +3,11 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 import asyncio
 
-from playwright.async_api import async_playwright, Browser, Page, BrowserContext
+try:
+    from playwright.async_api import async_playwright, Browser, Page, BrowserContext
+    PLAYWRIGHT_AVAILABLE = True
+except ImportError:
+    PLAYWRIGHT_AVAILABLE = False
 
 from app.services.automation import JobPortalAdapter
 

@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from typing import Optional, Dict, Any
+from typing import Optional
 from sqlalchemy import String, DateTime, Date, ForeignKey, JSON, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -19,13 +19,8 @@ class AnalyticsSnapshot(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
     snapshot_type: Mapped[str] = mapped_column(String(20), nullable=False)
     snapshot_date: Mapped[date] = mapped_column(Date, nullable=False)
-    data: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow
-    )
+    data = mapped_column(JSON, nullable=True, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
-    def __repr__(self) -> str:
-        return (
-            f"<AnalyticsSnapshot(id={self.id}, user_id={self.user_id}, "
-            f"type='{self.snapshot_type}', date={self.snapshot_date})>"
-        )
+    def __repr__(self):
+        return f"<AnalyticsSnapshot(id={self.id}, user_id={self.user_id}, type='{self.snapshot_type}', date={self.snapshot_date})>"

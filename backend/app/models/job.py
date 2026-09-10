@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import Optional, List, Any
-from sqlalchemy import String, Float, Integer, DateTime, Text, ForeignKey, UniqueConstraint
+from typing import Optional, List
+from sqlalchemy import String, Float, Integer, DateTime, Text, ForeignKey, UniqueConstraint, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -23,10 +23,10 @@ class Job(Base):
     experience_years: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     employment_type: Mapped[str] = mapped_column(String(50), default="full-time")
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    required_skills: Mapped[Optional[List[Any]]] = mapped_column(default=[])
-    preferred_skills: Mapped[Optional[List[Any]]] = mapped_column(default=[])
-    responsibilities: Mapped[Optional[List[Any]]] = mapped_column(default=[])
-    qualifications: Mapped[Optional[List[Any]]] = mapped_column(default=[])
+    required_skills = mapped_column(JSON, nullable=True, default=list)
+    preferred_skills = mapped_column(JSON, nullable=True, default=list)
+    responsibilities = mapped_column(JSON, nullable=True, default=list)
+    qualifications = mapped_column(JSON, nullable=True, default=list)
     posted_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     collected_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     application_url: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
@@ -35,18 +35,14 @@ class Job(Base):
     match_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     duplicate_hash: Mapped[Optional[str]] = mapped_column(String(64), index=True, nullable=True)
     is_active: Mapped[bool] = mapped_column(default=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    saved_jobs: Mapped[List["SavedJob"]] = relationship("SavedJob", back_populates="job")
-    matches: Mapped[List["JobMatch"]] = relationship("JobMatch", back_populates="job")
-    applications: Mapped[List["Application"]] = relationship("Application", back_populates="job")
+    saved_jobs = relationship("SavedJob", back_populates="job")
+    matches = relationship("JobMatch", back_populates="job")
+    applications = relationship("Application", back_populates="job")
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return f"<Job(id={self.id}, title='{self.title}', company='{self.company}')>"
 
 
@@ -61,9 +57,9 @@ class SavedJob(Base):
     user_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     saved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
-    job: Mapped["Job"] = relationship("Job", back_populates="saved_jobs")
+    job = relationship("Job", back_populates="saved_jobs")
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return f"<SavedJob(id={self.id}, user_id={self.user_id}, job_id={self.job_id})>"
 
 
@@ -86,7 +82,7 @@ class JobMatch(Base):
     explanation: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     calculated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
-    job: Mapped["Job"] = relationship("Job", back_populates="matches")
+    job = relationship("Job", back_populates="matches")
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return f"<JobMatch(id={self.id}, job_id={self.job_id}, score={self.overall_score})>"
