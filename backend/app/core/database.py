@@ -6,12 +6,12 @@ from sqlalchemy.orm import DeclarativeBase
 from app.core.config import settings
 
 
+is_sqlite = settings.DATABASE_URL.startswith("sqlite")
+
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=settings.DATABASE_ECHO,
-    pool_pre_ping=True,
-    pool_size=20,
-    max_overflow=10,
+    **({} if is_sqlite else {"pool_pre_ping": True, "pool_size": 20, "max_overflow": 10}),
 )
 
 async_session_factory = async_sessionmaker(

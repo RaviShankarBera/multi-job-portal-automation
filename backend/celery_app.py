@@ -1,76 +1,48 @@
-from celery import Celery
-from celery.schedules import crontab
+from app.core.config import settings
 
-# Create Celery application
-celery_app = Celery(
-    "jobportal",
-    broker="redis://localhost:6379/1",
-    backend="redis://localhost:6379/2",
-)
+# Only configure Celery if Redis is available
+if settings.REDIS_URL:
+    from celery import Celery
+    from celery.schedules import crontab
 
-# Celery configuration
-celery_app.conf.update(
-    # Serialization
-    task_serializer="json",
-    accept_content=["json"],
-    result_serializer="json",
-    
-    # Timezone
-    timezone="UTC",
-    enable_utc=True,
-    
-    # Task settings
-    task_track_started=True,
-    task_time_limit=300,  # 5 minutes
-    task_soft_time_limit=240,  # 4 minutes
-    task_acks_late=True,
-    worker_prefetch_multiplier=1,
-    
-    # Result settings
-    result_expires=3600,  # 1 hour
-    result_persistent=True,
-    
-    # Retry settings
-    task_default_retry_delay=60,
-    task_max_retries=3,
-    
-    # Worker settings
-    worker_max_tasks_per_child=1000,
-    worker_max_memory_per_child=200000,  # 200MB
-)
+    celery_app = Celery(
+        "jobportal",
+        broker=settings.REDIS_URL,
+        backend=settings.REDIS_URL,
+    )
 
-# Beat schedule for periodic tasks
-celery_app.conf.beat_schedule = {
-    # Execute scheduled searches every 15 minutes
-    "execute-scheduled-searches": {
-        "task": "app.tasks.scheduled_searches.execute_due_searches",
-        "schedule": crontab(minute="*/15"),
-    },
-    
-    # Create daily analytics snapshots at midnight
-    "create-daily-snapshots": {
-        "task": "app.tasks.analytics.create_daily_snapshots",
-        "schedule": crontab(hour=0, minute=0),
-    },
-    
-    # Check follow-up reminders at 8 AM
-    "check-follow-ups": {
-        "task": "app.tasks.notifications.check_follow_ups",
-        "schedule": crontab(hour=8, minute=0),
-    },
-    
-    # Clean up old notifications weekly (Sunday at midnight)
-    "cleanup-old-notifications": {
-        "task": "app.tasks.notifications.cleanup_old_notifications",
-        "schedule": crontab(hour=0, minute=0, day_of_week=0),
-    },
-    
-    # Update user job scores daily at 2 AM
-    "update-job-scores": {
-        "task": "app.tasks.analytics.update_job_scores",
-        "schedule": crontab(hour=2, minute=0),
-    },
-}
+    celery_app.conf.update(
+        task_serializer="json",
+        accept_content=["json"],
+        result_serializer="json",
+        timezone="UTC",
+        enable_utc=True,
+        task_track_started=True,
+        task_time_limit=300,
+        task_soft_time_limit=240,
+        task_acks_late=True,
+        worker_prefetch_multiplier=1,
+        result_expires=3600,
+        task_default_retry_delay=60,
+        task_max_retries=3,
+    )
 
-# Auto-discover tasks
-celery_app.autodiscover_tasks(["app.tasks"])
+    celery_app.conf.beat_schedule = {
+        "execute-scheduled-searches": {
+            "task": "app.tasks.scheduled_searches.execute_due_searches",
+            "schedule": crontab(minute="*/15"),
+        },
+        "create-daily-snapshots": {
+            "task": "app.tasks.analytics.create_daily_snapshots",
+            "schedule": crontab(hour=0, minute=0),
+        },
+        "check-follow-ups": {
+            "task": "app.tasks.notifications.check_follow_ups",
+            "schedule": crontab(hour=8, minute=0),
+        },
+    }
+
+    celery_app.autodiscover_tasks(["app.tasks"])
+else:
+    celery_app = None
+    print("WARNING: Redis not configured. Celery tasks disabled. Set REDIS_URL in .env to enable.")
