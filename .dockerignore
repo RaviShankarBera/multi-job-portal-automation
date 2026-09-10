@@ -1,0 +1,128 @@
+# ============================================
+# Docker Ignore File
+# Multi Job Portal Automation Tool
+# ============================================
+
+# ==========================================
+# Version Control
+# ==========================================
+.git
+.gitignore
+.github
+.gitlab-ci.yml
+
+# ==========================================
+# IDE and Editor Files
+# ==========================================
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# Node.js Dependencies
+# ==========================================
+node_modules
+frontend/node_modules
+frontend/.next
+frontend/.turbo
+
+# ==========================================
+# Python Dependencies
+# ==========================================
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+*.egg-info
+*.egg
+.eggs
+dist
+build
+*.whl
+venv
+.venv
+env
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# Testing
+# ==========================================
+tests/
+test/
+__tests__/
+coverage/
+htmlcov/
+.coverage
+.coverage.*
+.pytest_cache
+.tox
+.nox
+htmlcov
+
+# ==========================================
+# Documentation
+# ==========================================
+*.md
+!README.md
+docs/
+documentation/
+LICENSE
+
+# ==========================================
+# Docker
+# ==========================================
+.docker/
+docker-compose*.yml
+Dockerfile*
+
+# ==========================================
+# Logs and Temporary Files
+# ==========================================
+logs/
+*.log
+tmp/
+temp/
+.cache/
+.mypy_cache
+.ruff_cache
+
+# ==========================================
+# CI/CD
+# ==========================================
+.circleci/
+.travis.yml
+appveyor.yml
+Jenkinsfile
+
+# ==========================================
+# IDE Specific
+# ==========================================
+*.sublime-project
+*.sublime-workspace
+.vscode-test
+*.code-workspace
+
+# ==========================================
+# OS Generated
+# ==========================================
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# ==========================================
+# Miscellaneous
+# ==========================================
+*.bak
+*.tmp
+*.temp
+*.orig
+*.rej

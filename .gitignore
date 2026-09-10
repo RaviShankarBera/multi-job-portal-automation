@@ -1,0 +1,221 @@
+# ============================================
+# Git Ignore File
+# Multi Job Portal Automation Tool
+# ============================================
+
+# ==========================================
+# Python
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+*.whl
+eggs/
+*.egg-info
+.Python
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+parts/
+dist/
+build/
+sdist/
+wheels/
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Python Testing
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+*.cover
+
+# Python Linting
+.mypy_cache/
+.ruff_cache/
+.pytype/
+*.pyc
+
+# Python IDE
+.vscode/settings.json
+.idea/
+
+# ==========================================
+# Node.js
+# ==========================================
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+nuxt/
+.nuxt/
+dist/
+frontend/dist/
+build/
+frontend/build/
+.pnp
+.pnp.js
+
+# Node.js Testing
+coverage/
+.nyc_output/
+
+# Node.js Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node.js Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ==========================================
+# IDE
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+.vscode-test/
+.vscode-insiders/
+
+# ==========================================
+# Operating System
+# ==========================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+Icon?
+.TemporaryItems
+
+# ==========================================
+# Docker
+# ==========================================
+.docker/
+docker-compose.override.yml
+*.tar
+*.tar.gz
+*.tar.bz2
+
+# ==========================================
+# Testing and Coverage
+# ==========================================
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# ==========================================
+# Logs
+# ==========================================
+*.log
+logs/
+logs/*.log
+app/logs/
+celerylogs/
+
+# ==========================================
+# Environment and Secrets
+# ==========================================
+.env
+.env.*
+!.env.example
+!.env.sample
+secrets/
+*.pem
+*.key
+*.crt
+*.p12
+
+# ==========================================
+# Build Artifacts
+# ==========================================
+build/
+dist/
+*.tar
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# ==========================================
+# Databases
+# ==========================================
+*.sqlite3
+*.db
+*.sqlite
+
+# ==========================================
+# Temporary Files
+# ==========================================
+tmp/
+temp/
+.tmp/
+.temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*.rej
+
+# ==========================================
+# Jupyter Notebooks
+# ==========================================
+.ipynb_checkpoints/
+
+# ==========================================
+# Misc
+# ==========================================
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks

@@ -1,0 +1,186 @@
+version: '3.8'
+
+# ============================================
+# Multi Job Portal Automation Tool
+# Docker Compose Development Overrides
+# ============================================
+
+services:
+  # ==========================================
+  # PostgreSQL - Development
+  # ==========================================
+  postgres:
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: jobportal_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    # Expose to host for direct access
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # ==========================================
+  # Redis - Development
+  # ==========================================
+  redis:
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass redispassword
+    volumes:
+      - redis_dev_data:/data
+    # Enable Redis UI access
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # ==========================================
+  # Backend - Development with Hot Reload
+  # ==========================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: jobportal-backend-dev
+    ports:
+      - "8000:8000"
+      - "5678:5678"  # Debug port
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/jobportal_dev
+      - REDIS_URL=redis://:redispassword@redis:6379/0
+      - CELERY_BROKER_URL=redis://:redispassword@redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://:redispassword@redis:6379/2
+      - SECRET_KEY=dev-secret-key-not-for-production
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=debug
+    volumes:
+      - ./backend:/app
+      - backend_logs:/app/logs
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - jobportal-network
+    # Enable debugging
+    stdin_open: true
+    tty: true
+
+  # ==========================================
+  # Celery Worker - Development with Hot Reload
+  # ==========================================
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: jobportal-celery-worker-dev
+    command: celery -A app.core.celery_app worker --loglevel=debug --concurrency=2 -E --statedb=/app/celery-worker-state
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/jobportal_dev
+      - REDIS_URL=redis://:redispassword@redis:6379/0
+      - CELERY_BROKER_URL=redis://:redispassword@redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://:redispassword@redis:6379/2
+      - SECRET_KEY=dev-secret-key-not-for-production
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=debug
+    volumes:
+      - ./backend:/app
+      - celery_logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - jobportal-network
+    stdin_open: true
+    tty: true
+
+  # ==========================================
+  # Celery Beat - Development
+  # ==========================================
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: jobportal-celery-beat-dev
+    command: celery -A app.core.celery_app beat --loglevel=debug
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/jobportal_dev
+      - REDIS_URL=redis://:redispassword@redis:6379/0
+      - CELERY_BROKER_URL=redis://:redispassword@redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://:redispassword@redis:6379/2
+      - SECRET_KEY=dev-secret-key-not-for-production
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=debug
+    volumes:
+      - ./backend:/app
+      - celery_beat_logs:/app/logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - jobportal-network
+    stdin_open: true
+    tty: true
+
+  # ==========================================
+  # Frontend - Development with Hot Reload
+  # ==========================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: jobportal-frontend-dev
+    ports:
+      - "3000:3000"
+      - "9229:9229"  # Node.js debug port
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+      - frontend_logs:/app/logs
+    command: npm run dev
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - jobportal-network
+    stdin_open: true
+    tty: true
+
+# ==========================================
+# Development Volumes
+# ==========================================
+volumes:
+  postgres_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+  backend_logs:
+    driver: local
+  celery_logs:
+    driver: local
+  celery_beat_logs:
+    driver: local
+  frontend_node_modules:
+    driver: local
+  frontend_logs:
+    driver: local
+
+# ==========================================
+# Development Networks
+# ==========================================
+networks:
+  jobportal-network:
+    driver: bridge
+    name: jobportal-network-dev
