@@ -276,8 +276,8 @@ export default function ProfilePage() {
                     <option value="">Select education level</option>
                     <option value="high_school">High School</option>
                     <option value="associate">Associate Degree</option>
-                    <option value="bachelor">Bachelor's Degree</option>
-                    <option value="master">Master's Degree</option>
+                    <option value="bachelor">Bachelor&apos;s Degree</option>
+                    <option value="master">Master&apos;s Degree</option>
                     <option value="phd">PhD</option>
                   </select>
                 </div>
