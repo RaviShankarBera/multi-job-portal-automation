@@ -65,13 +65,13 @@ cd job-portal-automation
 cp .env.example .env
 
 # Start all services
-docker-compose up -d
+docker compose up -d
 
 # Run database migrations
-docker-compose exec backend npm run prisma:migrate
+docker compose exec backend npm run prisma:migrate
 
 # Seed the database
-docker-compose exec backend npm run seed
+docker compose exec backend npm run seed
 
 # Access the application
 # Frontend: http://localhost:3000
@@ -223,7 +223,7 @@ job-portal-automation/
 │   └── nginx.conf
 ├── docs/                    # Documentation
 ├── .github/                 # GitHub Actions
-├── docker-compose.yml
+├── docker compose.yml
 └── README.md
 ```
 

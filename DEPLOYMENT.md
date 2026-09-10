@@ -41,19 +41,19 @@ cp .env.example .env
 nano .env
 
 # Start all services
-docker-compose up -d
+docker compose up -d
 
 # Check service status
-docker-compose ps
+docker compose ps
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ### Docker Compose Configuration
 
 ```yaml
-# docker-compose.yml
+# docker compose.yml
 version: '3.8'
 
 services:
@@ -200,35 +200,35 @@ CHROME_PATH=/usr/bin/chromium
 
 ```bash
 # Start services
-docker-compose up -d
+docker compose up -d
 
 # Stop services
-docker-compose down
+docker compose down
 
 # View logs
-docker-compose logs -f backend
-docker-compose logs -f automation
+docker compose logs -f backend
+docker compose logs -f automation
 
 # Restart a service
-docker-compose restart backend
+docker compose restart backend
 
 # Scale workers
-docker-compose up -d --scale worker=3
+docker compose up -d --scale worker=3
 
 # Access container shell
-docker-compose exec backend sh
+docker compose exec backend sh
 
 # Run database migrations
-docker-compose exec backend npm run prisma:migrate
+docker compose exec backend npm run prisma:migrate
 
 # Seed database
-docker-compose exec backend npm run seed
+docker compose exec backend npm run seed
 
 # Backup database
-docker-compose exec postgres pg_dump -U postgres job_portal > backup.sql
+docker compose exec postgres pg_dump -U postgres job_portal > backup.sql
 
 # Restore database
-docker-compose exec -T postgres psql -U postgres job_portal < backup.sql
+docker compose exec -T postgres psql -U postgres job_portal < backup.sql
 ```
 
 ---
@@ -426,7 +426,7 @@ git clone https://github.com/your-org/job-portal-automation.git
 cd job-portal-automation
 
 # Start development services (PostgreSQL + Redis)
-docker-compose -f docker-compose.dev.yml up -d
+docker compose -f docker compose.dev.yml up -d
 
 # Install and start backend
 cd backend && npm install && npm run dev
@@ -438,27 +438,27 @@ cd frontend && npm install && npm run dev
 ### Staging Environment
 
 ```bash
-# Use staging docker-compose
-docker-compose -f docker-compose.staging.yml up -d
+# Use staging docker compose
+docker compose -f docker compose.staging.yml up -d
 
 # Run migrations
-docker-compose -f docker-compose.staging.yml exec backend npm run prisma:migrate
+docker compose -f docker compose.staging.yml exec backend npm run prisma:migrate
 
 # Seed with test data
-docker-compose -f docker-compose.staging.yml exec backend npm run seed:staging
+docker compose -f docker compose.staging.yml exec backend npm run seed:staging
 ```
 
 ### Production Environment
 
 ```bash
-# Use production docker-compose
-docker-compose -f docker-compose.prod.yml up -d
+# Use production docker compose
+docker compose -f docker compose.prod.yml up -d
 
 # Run migrations
-docker-compose -f docker-compose.prod.yml exec backend npm run prisma:migrate:prod
+docker compose -f docker compose.prod.yml exec backend npm run prisma:migrate:prod
 
 # Setup monitoring
-docker-compose -f docker-compose.prod.yml up -d prometheus grafana
+docker compose -f docker compose.prod.yml up -d prometheus grafana
 ```
 
 ---
@@ -469,7 +469,7 @@ docker-compose -f docker-compose.prod.yml up -d prometheus grafana
 
 ```bash
 # Connect to PostgreSQL
-docker-compose exec postgres psql -U postgres
+docker compose exec postgres psql -U postgres
 
 # Create database (if not using Docker)
 CREATE DATABASE job_portal;
@@ -512,7 +512,7 @@ npx prisma migrate dev --name migration_name
 #!/bin/bash
 BACKUP_DIR="/backups/postgres"
 DATE=$(date +%Y%m%d_%H%M%S)
-docker-compose exec -T postgres pg_dump -U postgres job_portal | gzip > "$BACKUP_DIR/backup_$DATE.sql.gz"
+docker compose exec -T postgres pg_dump -U postgres job_portal | gzip > "$BACKUP_DIR/backup_$DATE.sql.gz"
 
 # Keep only last 30 days
 find $BACKUP_DIR -name "backup_*.sql.gz" -mtime +30 -delete
@@ -581,13 +581,13 @@ Import dashboard:
 
 ```bash
 # View Docker logs
-docker-compose logs -f --tail=100 backend
+docker compose logs -f --tail=100 backend
 
 # Filter by time
-docker-compose logs --since="2024-01-15T10:00:00" backend
+docker compose logs --since="2024-01-15T10:00:00" backend
 
 # Export logs
-docker-compose logs backend > backend_logs.txt
+docker compose logs backend > backend_logs.txt
 ```
 
 ### Alerting Rules
@@ -632,56 +632,56 @@ groups:
 
 ```bash
 # Check PostgreSQL status
-docker-compose ps postgres
+docker compose ps postgres
 
 # Check logs
-docker-compose logs postgres
+docker compose logs postgres
 
 # Test connection
-docker-compose exec postgres psql -U postgres -c "SELECT 1"
+docker compose exec postgres psql -U postgres -c "SELECT 1"
 
 # Reset database
-docker-compose down -v
-docker-compose up -d postgres
+docker compose down -v
+docker compose up -d postgres
 ```
 
 #### Redis Connection Issues
 
 ```bash
 # Check Redis status
-docker-compose ps redis
+docker compose ps redis
 
 # Test connection
-docker-compose exec redis redis-cli ping
+docker compose exec redis redis-cli ping
 
 # Check memory usage
-docker-compose exec redis redis-cli info memory
+docker compose exec redis redis-cli info memory
 ```
 
 #### Backend Startup Issues
 
 ```bash
 # Check backend logs
-docker-compose logs backend
+docker compose logs backend
 
 # Check environment variables
-docker-compose exec backend env
+docker compose exec backend env
 
 # Run in debug mode
-docker-compose exec backend node --inspect dist/index.js
+docker compose exec backend node --inspect dist/index.js
 ```
 
 #### Automation Issues
 
 ```bash
 # Check Chromium installation
-docker-compose exec automation npx puppeteer browsers inspect
+docker compose exec automation npx puppeteer browsers inspect
 
 # Check browser logs
-docker-compose logs automation
+docker compose logs automation
 
 # Run with visible browser (for debugging)
-docker-compose -f docker-compose.debug.yml up automation
+docker compose -f docker compose.debug.yml up automation
 ```
 
 ### Performance Issues
@@ -691,7 +691,7 @@ docker-compose -f docker-compose.debug.yml up automation
 docker stats
 
 # Check database queries
-docker-compose exec postgres psql -U postgres -c "
+docker compose exec postgres psql -U postgres -c "
 SELECT query, calls, mean_exec_time
 FROM pg_stat_statements
 ORDER BY mean_exec_time DESC
@@ -699,7 +699,7 @@ LIMIT 10;
 "
 
 # Check Redis slow log
-docker-compose exec redis redis-cli slowlog get 10
+docker compose exec redis redis-cli slowlog get 10
 ```
 
 ### Network Issues
@@ -710,21 +710,21 @@ docker network ls
 docker network inspect job-portal_default
 
 # Test service connectivity
-docker-compose exec backend ping postgres
-docker-compose exec backend ping redis
+docker compose exec backend ping postgres
+docker compose exec backend ping redis
 ```
 
 ### Log Analysis
 
 ```bash
 # Search for errors
-docker-compose logs backend | grep -i error
+docker compose logs backend | grep -i error
 
 # Count errors by type
-docker-compose logs backend | grep -o "ERROR:.*" | sort | uniq -c | sort -rn
+docker compose logs backend | grep -o "ERROR:.*" | sort | uniq -c | sort -rn
 
 # Export logs for analysis
-docker-compose logs --no-color backend > backend.log
+docker compose logs --no-color backend > backend.log
 ```
 
 ---
@@ -735,13 +735,13 @@ docker-compose logs --no-color backend > backend.log
 
 ```bash
 # Backup current state
-docker-compose exec postgres pg_dump -U postgres job_portal > backup_rollback.sql
+docker compose exec postgres pg_dump -U postgres job_portal > backup_rollback.sql
 
 # Reset to previous migration
 npx prisma migrate reset
 
 # Restore from backup
-docker-compose exec -T postgres psql -U postgres job_portal < backup_rollback.sql
+docker compose exec -T postgres psql -U postgres job_portal < backup_rollback.sql
 ```
 
 ### Application Rollback
@@ -751,12 +751,12 @@ docker-compose exec -T postgres psql -U postgres job_portal < backup_rollback.sq
 docker images | grep job-portal
 
 # Rollback to previous version
-docker-compose up -d --no-deps backend=job-portal-backend:previous-tag
+docker compose up -d --no-deps backend=job-portal-backend:previous-tag
 
 # Or rebuild from previous commit
 git checkout <previous-commit>
-docker-compose build backend
-docker-compose up -d backend
+docker compose build backend
+docker compose up -d backend
 ```
 
 ---
@@ -765,6 +765,6 @@ docker-compose up -d backend
 
 For deployment issues:
 - Check [Troubleshooting](#troubleshooting) section
-- Review logs: `docker-compose logs -f`
+- Review logs: `docker compose logs -f`
 - Open issue: GitHub Issues
 - Contact: devops@yourdomain.com

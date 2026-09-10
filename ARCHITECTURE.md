@@ -421,7 +421,7 @@
 
 ### Container Orchestration
 ```yaml
-# docker-compose.yml structure
+# docker compose.yml structure
 services:
   nginx:        # Reverse proxy
   backend:      # API server
