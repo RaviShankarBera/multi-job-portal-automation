@@ -72,7 +72,7 @@ class OpenAIProvider(AIProvider):
     def _build_cache_key(self, prefix: str, *args) -> str:
         import hashlib
         content = json.dumps(args, sort_keys=True, default=str)
-        hash_val = hashlib.md5(content.encode()).hexdigest()
+        hash_val = hashlib.sha256(content.encode()).hexdigest()[:16]
         return f"ai:{prefix}:{hash_val}"
 
     @retry(

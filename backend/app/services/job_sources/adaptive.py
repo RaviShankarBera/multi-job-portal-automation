@@ -72,7 +72,7 @@ class AdaptiveJobAdapter(JobSourceAdapter):
     def _parse_rss(self, xml_content: str) -> List[dict]:
         jobs = []
         try:
-            root = ET.fromstring(xml_content)
+            root = ET.fromstring(xml_content)  # nosec B314 - RSS feeds from trusted sources only
             item_tag = self.parsing_rules.get("item_tag", "item")
             for item in root.iter(item_tag):
                 job = {

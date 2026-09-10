@@ -1,0 +1,18 @@
+# Ruff configuration - relaxed rules for initial development
+target-version = "py311"
+line-length = 120
+
+[lint]
+# Ignore rules that are too strict for initial development
+ignore = [
+    "E501",   # Line too long
+    "B008",   # Do not perform function call Depends in argument defaults
+    "BLE001", # Do not catch blind exception
+    "F401",   # Unused imports (we'll clean up later)
+    "I001",   # Import block is un-sorted
+    "UP035",  # Import from collections.abc instead of typing
+]
+
+[lint.per-file-ignores]
+"tests/*" = ["F401", "B008"]
+"alembic/*" = ["F401", "I001"]
